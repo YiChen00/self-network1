@@ -13,18 +13,19 @@ export const footerItems: Array<NavItemType> = [
     name: 'Home',
     href: '/'
   },
-  {
-    name: 'About',
-    href: '/about'
-  },
-  {
-    name: 'Projects',
-    href: '/projects'
-  },
-  {
-    name: 'Blogs',
-    href: '/blogs'
-  }
+  // 顶部和底部导航栏修改
+  // {
+  //   name: 'About',
+  //   href: '/about'
+  // },
+  // {
+  //   name: 'Projects',
+  //   href: '/projects'
+  // },
+  // {
+  //   name: 'Blogs',
+  //   href: '/blogs'
+  // }
 ]
 
 export const navItems: Array<NavItemType> = [
@@ -32,16 +33,16 @@ export const navItems: Array<NavItemType> = [
     name: 'Home',
     href: '/'
   },
-  {
-    name: 'About',
-    href: '/about'
-  },
-  {
-    name: 'Projects',
-    href: '/projects'
-  },
-  {
-    name: 'Blogs',
-    href: '/blogs'
-  }
+  // {
+  //   name: 'About',
+  //   href: '/about'
+  // },
+  // {
+  //   name: 'Projects',
+  //   href: '/projects'
+  // },
+  // {
+  //   name: 'Blogs',
+  //   href: '/blogs'
+  // }
 ]
