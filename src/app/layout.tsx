@@ -2,10 +2,7 @@ import { type Metadata } from 'next'
 
 import { Providers } from '@/app/providers'
 import { Layout } from '@/components/layout/Layout'
-
-// import { name, headline, introduction } from '@/config/infoConfig'
-import { name, headline } from '@/config/infoConfig'
-
+import { name, headline, introduction } from '@/config/infoConfig'
 import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
@@ -14,11 +11,11 @@ export const metadata: Metadata = {
     default:
       `${name} - ${headline}`,
   },
-  // description:
-  //   `${introduction}`,
-  // alternates: {
-  //   canonical: '/',
-  // },
+  description:
+    `${introduction}`,
+  alternates: {
+    canonical: '/',
+  },
 }
 
 export default function RootLayout({

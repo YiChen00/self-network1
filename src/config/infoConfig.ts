@@ -5,8 +5,8 @@ export * from './career'
 // personal info
 export const name = 'Yaqi yang'
 export const headline = 'Student at Dalian University of Technology.'
-// // export const introduction =
-// //   "Coucou Les Amis! My name is Derek Hu. I'm from Hubei and an alumnus of BUPT, UChicago, and Tsinghua. I’ve been teaching Computer Science at SCLS since 2020."
+export const introduction =
+  "The Wild Grad Student's Survival Guide."
 export const email = 'yaqi0yang@gmail.com'
 export const githubUsername = 'YiChen00'
 
@@ -19,7 +19,7 @@ export const aboutParagraphs = [
 ]
 
 // blog
-// export const blogHeadLine = "What I've thinking about."
+export const blogHeadLine = "A chaotic mix of content and ideas."
 // export const blogIntro =
 //   "I've written something about AI, programming and life."
 

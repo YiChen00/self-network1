@@ -13,12 +13,22 @@ export function ProjectCard({ project, titleAs }: { project: ProjectItemType, ti
   let Component = titleAs ?? 'h2'
   return (
     <li className='group relative flex flex-col items-start h-full'>
-      <div className="relative flex flex-col justify-between h-full w-full p-4 rounded-2xl border border-muted-foreground/20 shadow-sm transition-all group-hover:scale-[1.03] group-hover:shadow-md group-hover:bg-muted/5">
+      <div className="relative flex flex-col justify-between h-58 w-full p-4 rounded-2xl border border-muted-foreground/20 shadow-sm transition-all group-hover:scale-[1.03] group-hover:shadow-md group-hover:bg-muted/5">
         <div className=''>
           <div className='flex flex-col sm:flex-row justify-center sm:justify-start items-start sm:items-center gap-4'>
+            {/* 使用本地图标 */}
             <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full">
-              <Favicon url={project.link.href} />
+              <Image
+                src="/images/icon/SolidWorks.png" // 替换为你本地图标的路径
+                alt={`${project.name} icon`}
+                width={28}
+                height={28}
+                className="rounded-full"
+              />
             </div>
+            {/* <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full">
+              <Favicon url={project.link.href} />
+            </div> */}
             <Component className="text-base font-semibold">
               {project.name}
             </Component>
