@@ -8,13 +8,15 @@ import '@/styles/tailwind.css'
 export const metadata: Metadata = {
   title: {
     template: `%s - ${name}`,
-    default:
-      `${name} - ${headline}`,
+    default: `${name} - ${headline}`,
   },
-  description:
-    `${introduction}`,
+  description: `${introduction}`,
   alternates: {
     canonical: '/',
+  },
+  // 设置 favicon
+  icons: {
+    icon: '/favicon-16x16.png', // 这里假设 favicon.ico 在 public 目录下
   },
 }
 
