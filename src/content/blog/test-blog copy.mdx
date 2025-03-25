@@ -1,0 +1,135 @@
+---
+title: 'Ubuntu 20.04.6 LTS上部署OpenFOAM 5.x + CFDEMcoupling + LIGGGHTS'
+description: '部署指南'
+date: '2025-03-23'
+---
+
+### 1. 系统准备
+
+#### 更新系统
+##### sudo apt update && sudo apt upgrade -y
+##### sudo apt install -y software-properties-common wget ca-certificates
+
+### 2. 配置阿里源
+##### sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+##### sudo sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+##### sudo sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+##### sudo apt update
+
+### 3. 安装依赖包（适配 GCC 9 和 Qt5）
+
+#### 安装核心依赖（无需降级 GCC）
+##### sudo apt install -y \
+#####  build-essential flex bison git cmake zlib1g-dev \
+#####  libboost-system-dev libboost-thread-dev libopenmpi-dev openmpi-bin \
+#####  gnuplot libreadline-dev libncurses-dev libxt-dev libscotch-dev libptscotch-dev \
+#####  libvtk7-dev python3-numpy ffmpeg octave curl \
+#####  libqt5x11extras5-dev qt5-default qttools5-dev libglu1-mesa-dev \
+#####  freeglut3-dev mesa-common-dev libfontconfig-dev libice-dev libsm-dev \
+#####  libx11-dev libxext-dev libxml2-dev libxt-dev libxt6 libxi-dev
+
+### 4. 获取源码
+
+#### OpenFOAM
+##### mkdir -p $HOME/OpenFOAM && cd $HOME/OpenFOAM
+##### git clone https://github.com/OpenFOAM/OpenFOAM-5.x.git
+##### git clone https://github.com/OpenFOAM/ThirdParty-5.x.git
+
+#### CFDEM
+##### mkdir -p $HOME/CFDEM && cd $HOME/CFDEM
+##### git clone https://github.com/CFDEMproject/CFDEMcoupling-PUBLIC.git CFDEMcoupling-PUBLIC-5.x
+
+##### LIGGGHTS
+##### mkdir -p $HOME/LIGGGHTS && cd $HOME/LIGGGHTS
+##### git clone https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git
+##### git clone https://github.com/CFDEMproject/LPP.git lpp
+
+### 5. 配置环境变量
+
+#### 编辑 ~/.bashrc
+##### echo "source $HOME/OpenFOAM/OpenFOAM-5.x/etc/bashrc" >> ~/.bashrc
+
+#####  添加 CFDEM 路径
+##### cat << EOF >> ~/.bashrc
+##### export CFDEM_VERSION=PUBLIC
+##### export CFDEM_PROJECT_DIR=\$HOME/CFDEM/CFDEMcoupling-PUBLIC-5.x
+##### export CFDEM_PROJECT_USER_DIR=\$HOME/CFDEM/\$LOGNAME-\$CFDEM_VERSION-5.x
+##### export CFDEM_bashrc=\$CFDEM_PROJECT_DIR/src/lagrangian/cfdemParticle/etc/bashrc
+##### export CFDEM_LIGGGHTS_SRC_DIR=\$HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
+##### export CFDEM_LIGGGHTS_MAKEFILE_NAME=auto
+##### export CFDEM_LPP_DIR=\$HOME/LIGGGHTS/lpp/src
+##### . \$CFDEM_bashrc
+##### EOF
+
+#### 立即生效
+##### source ~/.bashrc
+
+### 6. 编译 OpenFOAM（适配 GCC 9）
+
+##### cd $HOME/OpenFOAM/OpenFOAM-5.x
+
+#### 修复 GCC 9 兼容性问题（关键补丁）
+#### 修改编译器选项
+##### sed -i 's/-Wno-old-style-cast/-Wno-old-style-cast -std=c++11/g' wmake/rules/linux64Gcc/c++
+##### sed -i 's/-Wno-undefined-var-template//g' applications/utilities/mesh/manipulation/setSet/Make/ 
+##### options
+
+#### 开始编译
+##### ./Allwmake -j$(nproc) 2>&1 | tee compile.log
+
+#### 验证
+##### blockMesh --help  # 应显示帮助信息
+
+### 7. 编译 ParaView（使用 Qt5）
+
+#### 修复 ParaView 5.4.0 的 Qt5 兼容性
+##### cd $HOME/OpenFOAM/ThirdParty-5.x
+
+#### 应用补丁（解决 Qt5 头文件问题）
+##### wget https://raw.githubusercontent.com/OpenFOAM/ThirdParty-5.x/5.0/patches/ParaView-5.4.0.patch
+##### patch -p1 < ParaView-5.4.0.patch
+
+#### 创建缺失的 doc 目录
+##### mkdir -p ParaView-5.4.0/Plugins/StreamLinesRepresentation/doc
+
+#### 使用 Qt5 编译
+##### export QT_SELECT=qt5
+##### ./makeParaView -qmake $(which qmake)
+
+#### 编译后处理模块
+##### wmRefresh
+##### cd $FOAM_UTILITIES/postProcessing/graphics/PVReaders
+##### ./Allwclean && ./Allwmake
+
+### 8. 编译 CFDEM & LIGGGHTS（无需降级 GCC）
+
+#### 修复 LIGGGHTS 的 GCC 9 兼容性
+##### cd $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
+##### sed -i 's/-Werror=return-type//g' MAKE/Makefile.auto
+
+#### 编译 CFDEM
+##### cfdemCompCFDEMall
+
+#### 创建软链接
+##### sudo ln -sf $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src/lmp_auto /usr/local/bin/liggghts
+
+#### 验证
+##### liggghts -help  # 应显示版本信息
+
+### 验证部署
+
+#### OpenFOAM 测试案例
+##### mkdir -p $FOAM_RUN && cd $FOAM_RUN
+##### cp -r $FOAM_TUTORIALS/incompressible/icoFoam/cavity .
+##### cd cavity && blockMesh && icoFoam
+
+#### LIGGGHTS 测试
+##### liggghts -in $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/examples/LIGGGHTS/Tutorials_public/chute_wear/
+##### in.chute_wear
+
+
+
+
+
+
+---
