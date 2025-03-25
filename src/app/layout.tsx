@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   // 设置 favicon
   icons: {
-    icon: '/favicon-16x16.png', // 这里假设 favicon.ico 在 public 目录下
+    icon: '/favicon-32x32.png', // 这里假设 favicon.ico 在 public 目录下
   },
 }
 
