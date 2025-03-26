@@ -1,0 +1,181 @@
+---
+title: 'MDX 格式'
+description: 'MDX文件书写规范'
+date: '2025-03-26'
+---
+
+以下是 **MDX 文件书写规范**，适用于 Next.js 项目或其他支持 MDX 的框架。遵循这些规范可以避免常见语法错误，并提升内容的可维护性：
+
+---
+
+### 1. **文件基础规范**
+- **文件扩展名**：使用 `.mdx`（非 `.md`）。
+- **内容结构**：推荐包含 `Frontmatter`（元数据）和正文内容。
+  ```mdx
+  ---
+  title: 我的博客
+  date: 2023-10-01
+  tags: [技术, Next.js]
+  ---
+
+  # 这是标题
+
+  正文内容...
+  ```
+
+---
+
+### 2. **基本语法规则**
+#### **① 闭合所有 HTML/JSX 标签**
+- 所有自定义组件或 HTML 标签必须闭合：
+  ```mdx
+  <!-- 正确 -->
+  <div>内容</div>
+  <MyComponent />
+
+  <!-- 错误 -->
+  <div>内容  <!-- 缺少闭合标签 -->
+  ```
+
+#### **② 转义特殊字符**
+- 在文本中直接使用 `<`、`>`、`&` 时需转义：
+  ```mdx
+  错误：1 < 2 和 3 > 2  
+  正确：1 &lt; 2 和 3 &gt; 2
+  ```
+  或使用代码块包裹：
+  ```mdx
+  `1 < 2` 和 `3 > 2`
+  ```
+
+#### **③ Markdown 与 JSX 分隔**
+- **段落与 JSX 之间需空行**：
+  ```mdx
+  这是一段文本。
+
+  <MyComponent />  <!-- 上下空行 -->
+
+  另一段文本。
+  ```
+
+---
+
+### 3. **组件使用规范**
+#### **① 显式导入组件**
+- 在文件顶部导入所有自定义或第三方组件：
+  ```mdx
+  import MyComponent from '@/components/MyComponent';
+  import { Button } from '@mui/material';
+
+  # 标题
+
+  <MyComponent>
+    <Button>点击</Button>
+  </MyComponent>
+  ```
+
+#### **② 避免全局组件**
+- 即使全局注册了组件（如通过 `MDXProvider`），也建议显式导入以提高可读性。
+
+---
+
+### 4. **Frontmatter 元数据**
+- 使用 `---` 包裹 YAML 格式的元数据，用于定义标题、日期、标签等：
+  ```mdx
+  ---
+  title: "Next.js 入门指南"
+  author: 张三
+  published: true
+  ---
+  ```
+
+- 在 Next.js 中通过 `getStaticProps` 或 `getStaticPaths` 读取：
+  ```js
+  import { serialize } from 'next-mdx-remote/serialize';
+
+  export async function getStaticProps({ params }) {
+    const post = await getMdxContent(params.slug);
+    const mdxSource = await serialize(post.content);
+    return { props: { meta: post.meta, source: mdxSource } };
+  }
+  ```
+
+---
+
+### 5. **代码块与语法高亮**
+- 使用 ` ``` ` 包裹代码块，并指定语言：
+  ```mdx
+  ```jsx
+  function Hello() {
+    return <div>Hello MDX!</div>;
+  }
+  ```
+  ```
+
+- 确保项目已配置语法高亮（如通过 `rehype-highlight` 或 `@mapbox/rehype-prism`）。
+
+---
+
+### 6. **图片与资源引用**
+- **本地图片**：建议使用 `public` 目录或 Next.js 的 `Image` 组件：
+  ```mdx
+  import Image from 'next/image';
+
+  ![图片描述](/images/example.jpg)
+
+  <Image src="/images/optimized.jpg" alt="描述" width={800} height={400} />
+  ```
+
+- **远程图片**：直接使用 URL，但需配置域名白名单（`next.config.js`）。
+
+---
+
+### 7. **MDX 配置（Next.js 示例）**
+在 `next.config.js` 中扩展 MDX 支持：
+```js
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [/* 插件 */],
+    rehypePlugins: [/* 插件 */],
+  },
+});
+
+module.exports = withMDX({
+  pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
+});
+```
+
+---
+
+### 8. **校验与调试**
+- **在线校验**：将内容粘贴到 [MDX Playground](https://mdxjs.com/playground) 检查语法。
+- **本地调试**：通过 `console.log` 输出解析后的内容结构。
+
+---
+
+### 9. **最佳实践**
+1. **内容分块**：避免单个 MDX 文件过长，拆分为多个组件。
+2. **版本控制**：将 MDX 文件与代码一同纳入 Git 管理。
+3. **安全性**：避免直接渲染用户提交的 MDX 内容（防止 XSS）。
+
+---
+
+### 常见错误示例与修复
+| **错误场景**                | **修复方法**                          |
+|----------------------------|---------------------------------------|
+| `<div>未闭合标签`           | 补全 `</div>`                         |
+| 未转义的 `<` 符号           | 使用 `&lt;` 或代码块包裹               |
+| 未导入组件直接使用 `<Button>` | 添加 `import Button from '...'`       |
+
+---
+
+遵循以上规范，可以大幅降低 MDX 编译错误，同时提升内容的可读性和可维护性。如果仍遇到问题，提供具体代码片段可进一步分析！
+
+
+
+
+
+
+---
+
