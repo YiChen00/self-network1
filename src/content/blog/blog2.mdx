@@ -4,127 +4,170 @@ description: '部署指南'
 date: '2025-03-23'
 ---
 
-### 1. 系统准备
+## 1. 更换下载源
+```bash
+sudo nano /etc/apt/sources.list
 
-#### 更新系统
-##### sudo apt update && sudo apt upgrade -y
-##### sudo apt install -y software-properties-common wget ca-certificates
-
-### 2. 配置阿里源
-##### sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
-##### sudo sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-##### sudo sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-##### sudo apt update
-
-### 3. 安装依赖包（适配 GCC 9 和 Qt5）
-
-#### 安装核心依赖（无需降级 GCC）
-##### sudo apt install -y \
-#####  build-essential flex bison git cmake zlib1g-dev \
-#####  libboost-system-dev libboost-thread-dev libopenmpi-dev openmpi-bin \
-#####  gnuplot libreadline-dev libncurses-dev libxt-dev libscotch-dev libptscotch-dev \
-#####  libvtk7-dev python3-numpy ffmpeg octave curl \
-#####  libqt5x11extras5-dev qt5-default qttools5-dev libglu1-mesa-dev \
-#####  freeglut3-dev mesa-common-dev libfontconfig-dev libice-dev libsm-dev \
-#####  libx11-dev libxext-dev libxml2-dev libxt-dev libxt6 libxi-dev
-
-### 4. 获取源码
-
-#### OpenFOAM
-##### mkdir -p $HOME/OpenFOAM && cd $HOME/OpenFOAM
-##### git clone https://github.com/OpenFOAM/OpenFOAM-5.x.git
-##### git clone https://github.com/OpenFOAM/ThirdParty-5.x.git
-
-#### CFDEM
-##### mkdir -p $HOME/CFDEM && cd $HOME/CFDEM
-##### git clone https://github.com/CFDEMproject/CFDEMcoupling-PUBLIC.git CFDEMcoupling-PUBLIC-5.x
-
-##### LIGGGHTS
-##### mkdir -p $HOME/LIGGGHTS && cd $HOME/LIGGGHTS
-##### git clone https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git
-##### git clone https://github.com/CFDEMproject/LPP.git lpp
-
-### 5. 配置环境变量
-
-#### 编辑 ~/.bashrc
-##### echo "source $HOME/OpenFOAM/OpenFOAM-5.x/etc/bashrc" &gt;&gt; ~/.bashrc
-
-#####  添加 CFDEM 路径
-##### cat &lt;&lt; EOF >> ~/.bashrc
-##### export CFDEM_VERSION=PUBLIC
-##### export CFDEM_PROJECT_DIR=\$HOME/CFDEM/CFDEMcoupling-PUBLIC-5.x
-##### export CFDEM_PROJECT_USER_DIR=\$HOME/CFDEM/\$LOGNAME-\$CFDEM_VERSION-5.x
-##### export CFDEM_bashrc=\$CFDEM_PROJECT_DIR/src/lagrangian/cfdemParticle/etc/bashrc
-##### export CFDEM_LIGGGHTS_SRC_DIR=\$HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
-##### export CFDEM_LIGGGHTS_MAKEFILE_NAME=auto
-##### export CFDEM_LPP_DIR=\$HOME/LIGGGHTS/lpp/src
-##### . \$CFDEM_bashrc
-##### EOF
-
-#### 立即生效
-##### source ~/.bashrc
-
-### 6. 编译 OpenFOAM（适配 GCC 9）
-
-##### cd $HOME/OpenFOAM/OpenFOAM-5.x
-
-#### 修复 GCC 9 兼容性问题（关键补丁）
-#### 修改编译器选项
-##### sed -i 's/-Wno-old-style-cast/-Wno-old-style-cast -std=c++11/g' wmake/rules/linux64Gcc/c++
-##### sed -i 's/-Wno-undefined-var-template//g' applications/utilities/mesh/manipulation/setSet/Make/ 
-##### options
-
-#### 开始编译
-##### ./Allwmake -j$(nproc) 2>&1 | tee compile.log
-
-#### 验证
-##### blockMesh --help  # 应显示帮助信息
-
-### 7. 编译 ParaView（使用 Qt5）
-
-#### 修复 ParaView 5.4.0 的 Qt5 兼容性
-##### cd $HOME/OpenFOAM/ThirdParty-5.x
-
-#### 应用补丁（解决 Qt5 头文件问题）
-##### wget https://raw.githubusercontent.com/OpenFOAM/ThirdParty-5.x/5.0/patches/ParaView-5.4.0.patch
-##### patch -p1 &lt; ParaView-5.4.0.patch
-
-#### 创建缺失的 doc 目录
-##### mkdir -p ParaView-5.4.0/Plugins/StreamLinesRepresentation/doc
-
-#### 使用 Qt5 编译
-##### export QT_SELECT=qt5
-##### ./makeParaView -qmake $(which qmake)
-
-#### 编译后处理模块
-##### wmRefresh
-##### cd $FOAM_UTILITIES/postProcessing/graphics/PVReaders
-##### ./Allwclean && ./Allwmake
-
-### 8. 编译 CFDEM & LIGGGHTS（无需降级 GCC）
-
-#### 修复 LIGGGHTS 的 GCC 9 兼容性
-##### cd $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
-##### sed -i 's/-Werror=return-type//g' MAKE/Makefile.auto
-
-#### 编译 CFDEM
-##### cfdemCompCFDEMall
-
-#### 创建软链接
-##### sudo ln -sf $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src/lmp_auto /usr/local/bin/liggghts
-
-#### 验证
-##### liggghts -help  # 应显示版本信息
-
-### 验证部署
-
-#### OpenFOAM 测试案例
-##### mkdir -p $FOAM_RUN && cd $FOAM_RUN
-##### cp -r $FOAM_TUTORIALS/incompressible/icoFoam/cavity .
-##### cd cavity && blockMesh && icoFoam
-
-#### LIGGGHTS 测试
-##### liggghts -in $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/examples/LIGGGHTS/Tutorials_public/chute_wear/
-##### in.chute_wear
+将文件内容替换为阿里源配置：
+```bash
+deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+```
 
 ---
+
+## 2. 安装依赖包
+```bash
+sudo apt update 
+sudo apt-get install -y build-essential flex bison git cmake zlib1g-dev \
+libboost-system-dev libboost-thread-dev libopenmpi-dev openmpi-bin \
+gnuplot libreadline-dev libncurses-dev libxt-dev libscotch-dev \
+libptscotch-dev libvtk6-dev python-numpy ffmpeg octave curl
+```
+
+---
+
+## 3. 获取源码安装包
+```bash
+# OpenFOAM（需要科学上网）
+cd $HOME &&
+mkdir -p OpenFOAM &&
+cd OpenFOAM &&
+git clone git://github.com/OpenFOAM/OpenFOAM-5.x.git &&
+git clone git://github.com/OpenFOAM/ThirdParty-5.x.git
+
+# CFDEM
+cd $HOME &&
+mkdir -p CFDEM &&
+cd CFDEM &&
+git clone git://github.com/CFDEMproject/CFDEMcoupling-PUBLIC.git
+
+# LIGGGHTS
+cd $HOME &&
+mkdir -p LIGGGHTS &&
+cd LIGGGHTS &&
+git clone git://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git &&
+git clone git://github.com/CFDEMproject/LPP.git lpp
+```
+
+---
+
+## 4. 安装 Qt4
+```bash
+sudo add-apt-repository ppa:rock-core/qt4 &&
+sudo apt update &&
+sudo apt-get install qt4* &&
+sudo apt-get install qtcreator
+```
+
+---
+
+## 5. 配置 OpenFOAM 环境
+编辑 `.bashrc` 文件：
+```bash
+nano ~/.bashrc
+```
+在文件末尾添加：
+```bash
+source $HOME/OpenFOAM/OpenFOAM-5.x/etc/bashrc
+```
+刷新环境并验证：
+```bash
+source ~/.bashrc
+echo $WM_PROJECT_DIR  # 应输出 OpenFOAM-5.x 路径
+```
+
+---
+
+## 6. 编译 OpenFOAM
+```bash
+cd $HOME/OpenFOAM/OpenFOAM-5.x && 
+./Allwmake -j12  # 根据 CPU 核心数调整 -j 参数
+```
+验证编译：
+```bash
+blockMesh  # 若无报错则成功
+```
+
+---
+
+## 7. 编译 ParaView
+```bash
+# 创建 doc 目录
+sudo mkdir -p /home/yyq/OpenFOAM/ThirdParty-5.x/ParaView-5.4.0/Plugins/StreamLinesRepresentation/doc
+
+# 开始编译
+cd $HOME/OpenFOAM/ThirdParty-5.x &&
+export QT_SELECT=qt4 &&
+sudo apt install libqt5x11extras5-dev libxt-dev qt5-default qttools5-dev curl &&
+./makeParaView
+
+# 后续编译
+wmRefresh &&
+cd $FOAM_UTILITIES/postProcessing/graphics/PVReaders &&
+./Allwclean &&
+./Allwmake
+```
+
+---
+
+## 8. 安装 CFDEMcoupling 和 LIGGGHTS
+### 配置环境变量
+编辑 `.bashrc`：
+```bash
+nano ~/.bashrc
+```
+添加以下内容：
+```bash
+#================================================# 
+#- CFDEM 环境变量
+export CFDEM_VERSION=PUBLIC
+export CFDEM_PROJECT_DIR=$HOME/CFDEM/CFDEMcoupling-$CFDEM_VERSION-$WM_PROJECT_VERSION
+export CFDEM_PROJECT_USER_DIR=$HOME/CFDEM/$LOGNAME-$CFDEM_VERSION-$WM_PROJECT_VERSION
+export CFDEM_bashrc=$CFDEM_PROJECT_DIR/src/lagrangian/cfdemParticle/etc/bashrc
+export CFDEM_LIGGGHTS_SRC_DIR=$HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
+export CFDEM_LIGGGHTS_MAKEFILE_NAME=auto
+export CFDEM_LPP_DIR=$HOME/LIGGGHTS/lpp/src
+. $CFDEM_bashrc
+#================================================#
+```
+刷新环境：
+```bash
+source ~/.bashrc
+```
+
+### 编译 LIGGGHTS
+```bash
+cd $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src
+make auto
+```
+
+### 编译 CFDEM
+```bash
+cfdemCompCFDEMall  # 显示 "compilation done" 即成功
+```
+
+### 创建快捷方式
+```bash
+sudo ln -s $HOME/LIGGGHTS/LIGGGHTS-PUBLIC/src/lmp_auto/usr/bin/liggghts
+```
+验证安装：
+```bash
+liggghts  # 显示版本信息
+```
+
+---
+
+> **注意事项**  
+> - 步骤 3 需要科学上网  
+> - 编译时间较长（取决于硬件配置）  
+> - 路径中的 `yyq` 需替换为实际用户名
+```
