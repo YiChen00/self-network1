@@ -4,6 +4,7 @@ export type ProjectItemType = {
   description: string
   link: { href: string; label: string }
   tags: string[]
+  iconPath?: string
 }
 
 export type ActivityItemType = {
@@ -42,14 +43,16 @@ export const projects: Array<ProjectItemType> = [
     name: '连续式化学镀镍生产线建模',
     description: '2024.7',
     link: { href: '', label: 'View Project' },
-    tags: ['Project', 'SolidWorks', 'Engineering']
+    tags: ['Project', 'SolidWorks'],
+    iconPath: '/images/icon/SolidWorks.png'
   },
-  // {
-  //   name: 'Seeking DNA',
-  //   description: '2022 SCLS Hackathon',
-  //   link: { href: 'https://scls-cs.gitbook.io/scls-apcs-lab/lab5-dna', label: 'Hackathon' },
-  //   tags: ['Hackathon', 'Java']
-  // },
+  {
+    name: '探测望远镜支撑结构拓扑优化',
+    description: '2024.11',
+    link: { href: '', label: 'View Project' },
+    tags: ['Project', 'HyperMesh', 'OptiStruct'],
+    iconPath: '/images/icon/HyperWorks.png'
+  },
 ]
 
 // Hobbies & Volunteer

@@ -19,7 +19,10 @@ export function ProjectCard({ project, titleAs }: { project: ProjectItemType, ti
             {/* 使用本地图标 */}
             <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full">
               <Image
-                src="/images/icon/SolidWorks.png" // 替换为你本地图标的路径
+                // 修改前（静态路径）
+                // src="/images/icon/SolidWorks.png"
+                // 修改后（动态路径）
+                src={project.iconPath || "/images/icon/default-project.png"}
                 alt={`${project.name} icon`}
                 width={28}
                 height={28}
