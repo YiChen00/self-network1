@@ -42,6 +42,11 @@ export const socialLinks: Array<SocialLinkType> = [
     icon: 'bilibili',
     href: 'https://space.bilibili.com/1654926758',
   },
+  {
+    name: 'Github',
+    icon: 'github',
+    href: 'https://github.com/YiChen00',
+  },
 ]
 
 // https://simpleicons.org/
