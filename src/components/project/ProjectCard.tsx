@@ -13,7 +13,7 @@ export function ProjectCard({ project, titleAs }: { project: ProjectItemType, ti
   let Component = titleAs ?? 'h2'
   return (
     <li className='group relative flex flex-col items-start h-full'>
-      <div className="relative flex flex-col justify-between h-58 w-full p-4 rounded-2xl border border-muted-foreground/20 shadow-sm transition-all group-hover:scale-[1.03] group-hover:shadow-md group-hover:bg-muted/5">
+      <div className="relative flex flex-col justify-between h- full w-full p-4 rounded-2xl border border-muted-foreground/20 shadow-sm transition-all group-hover:scale-[1.03] group-hover:shadow-md dark:group-hover:shadow-[0_0_15px_rgba(209,213,219,0.2)] group-hover:bg-muted/5">
         <div className=''>
           <div className='flex flex-col sm:flex-row justify-center sm:justify-start items-start sm:items-center gap-4'>
             {/* 使用本地图标 */}
