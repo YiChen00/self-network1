@@ -56,7 +56,7 @@ export const projects: Array<ProjectItemType> = [
   {
     name: '3D打印',
     description: '2025.5',
-    link: { href: 'www.thingiverse.com/thing:7035982', label: 'View Project' },
+    link: { href: 'thingiverse.com/thing:7035982', label: 'View Project' },
     tags: ['Project', 'Solidworks', 'BambuStudio'],
     iconPath: '/images/icon/3D_Printing.png'
   },

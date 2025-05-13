@@ -1,5 +1,5 @@
 // site config
-export const utm_source = 'derek-portfolio'
+export const utm_source = 'y0y.vercel.app'
 
 
 // navigation config
