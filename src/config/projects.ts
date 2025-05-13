@@ -53,6 +53,13 @@ export const projects: Array<ProjectItemType> = [
     tags: ['Project', 'HyperMesh', 'OptiStruct'],
     iconPath: '/images/icon/HyperWorks.png'
   },
+  {
+    name: '3D打印',
+    description: '2025.5',
+    link: { href: 'https://www.thingiverse.com/thing:7035982', label: 'View Project' },
+    tags: ['Project', 'Solidworks', 'BambuStudio'],
+    iconPath: '/images/icon/3D_Printing.png'
+  },
 ]
 
 // Hobbies & Volunteer
