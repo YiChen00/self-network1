@@ -3,7 +3,7 @@ import Newsletter from '@/components/home/Newsletter'
 import Career from '@/components/home/Career'
 import Education from '@/components/home/Education'
 import SocialLinks from '@/components/home/SocialLinks'
-import { headline, introduction } from '@/config/infoConfig'
+import { headline, introduction, techIcons } from '@/config/infoConfig'
 import { BlogCard } from '@/components/home/BlogCard'
 import { getAllBlogs, type BlogType } from '@/lib/blogs'
 import { ProjectCard } from '@/components/project/ProjectCard'
@@ -24,8 +24,8 @@ export default async function Home() {
     <>
       <Container className="mt-9">
         {/* personal info */}
-        <div className="mb-10 grid grid-cols-1 {/* md:grid-cols-2*/}">
-          <div className='md:mt-20'>
+        <div className="mb-10 grid grid-cols-1 md:grid-cols-5">
+          <div className='md:mt-20 md:col-span-3'>
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl opacity-80">
               {headline}
             </h2>
@@ -34,9 +34,9 @@ export default async function Home() {
             </p>
             <SocialLinks className='md:mt-48'/>
           </div>
-          {/* <div className="relative flex size-full items-center justify-center overflow-hidden w-full px-20 md:px-0 md:w-2/3 ml-auto md:mr-8">
+          <div className="relative flex size-full items-center justify-center overflow-hidden w-full px-20 md:px-0 md:w-full md:col-span-2 ml-auto md:mr-8">
             <IconCloud iconSlugs={techIcons} />
-          </div> */}
+          </div>
         </div>
 
         {/* Awards */}

@@ -274,3 +274,7 @@ Deploy it to the cloud with Vercel (Documentation).
 ### 7. `styles` 目录（全局样式）
 - **`prism.css`**：用于代码高亮的样式文件，通常用于展示代码块时的样式。
 - **`tailwind.css`**：Tailwind CSS 的入口文件，用于引入 Tailwind CSS 的样式和配置。
+
+
+cd self-network1
+npm run dev

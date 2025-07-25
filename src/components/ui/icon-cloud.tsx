@@ -10,6 +10,7 @@ import {
   SimpleIcon,
 } from "react-icon-cloud";
 
+
 export const cloudProps: Omit<ICloud, "children"> = {
   containerProps: {
     style: {
@@ -17,6 +18,8 @@ export const cloudProps: Omit<ICloud, "children"> = {
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
+      maxWidth: "500px",      // 添加最大宽度
+      maxHeight: "500px",     // 添加最大高度
       paddingTop: 40,
     },
   },
@@ -24,7 +27,7 @@ export const cloudProps: Omit<ICloud, "children"> = {
     reverse: true,
     depth: 1,
     wheelZoom: false,
-    imageScale: 2,
+    imageScale: 1,
     activeCursor: "default",
     tooltip: "native",
     initial: [0.1, -0.1],
